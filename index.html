@@ -927,17 +927,18 @@
       <div class="field">
         <label for="fCat">Category</label>
         <select id="fCat">
-          <optgroup label="Tops">
+          <optgroup label="Tops &amp; Dresses">
             <option value="tshirt">T-Shirt</option>
             <option value="shirt">Shirt</option>
             <option value="sweater">Sweater</option>
             <option value="tanktop">Tank Top</option>
+            <option value="croptop">Crop Top</option>
+            <option value="dress">Dress</option>
           </optgroup>
           <optgroup label="Bottoms">
             <option value="jeans">Jeans</option>
             <option value="trousers">Trousers</option>
             <option value="joggers">Joggers</option>
-            <option value="cargos">Cargo Pants</option>
             <option value="shorts">Shorts</option>
           </optgroup>
           <optgroup label="Outerwear">
@@ -1252,10 +1253,11 @@
     shirt:{label:"Shirt", slot:"top", warmth:1},
     sweater:{label:"Sweater", slot:"top", warmth:3},
     tanktop:{label:"Tank Top", slot:"top", warmth:1},
+    croptop:{label:"Crop Top", slot:"top", warmth:1},
+    dress:{label:"Dress", slot:"top", warmth:1, fullLength:true},
     jeans:{label:"Jeans", slot:"bottom", warmth:2},
     trousers:{label:"Trousers", slot:"bottom", warmth:2},
     joggers:{label:"Joggers", slot:"bottom", warmth:2},
-    cargos:{label:"Cargo Pants", slot:"bottom", warmth:2},
     shorts:{label:"Shorts", slot:"bottom", warmth:1},
     skirt:{label:"Skirt", slot:"bottom", warmth:1},
     hoodie:{label:"Hoodie", slot:"outerwear", warmth:2},
@@ -1272,6 +1274,7 @@
     belt:{label:"Belt", slot:"accessory", warmth:1},
     bag:{label:"Bag", slot:"accessory", warmth:1},
     /* legacy values kept working for backward compatibility with older saved data */
+    cargos:{label:"Cargo Pants", slot:"bottom", warmth:2},
     blazer:{label:"Blazer", slot:"outerwear", warmth:2},
     dressshoes:{label:"Dress Shoes", slot:"shoes", warmth:1},
     top:{label:"Top", slot:"top", warmth:2},
@@ -1283,6 +1286,8 @@
   function catLabel(id){ return (CATEGORY_MAP[id] && CATEGORY_MAP[id].label) || id; }
   function catSlot(id){ return (CATEGORY_MAP[id] && CATEGORY_MAP[id].slot) || 'accessory'; }
   function catWarmth(id){ return (CATEGORY_MAP[id] && CATEGORY_MAP[id].warmth) || 2; }
+  // A full-length garment (a dress) fills the bottom slot as well as the top one.
+  function catFullLength(id){ return !!(CATEGORY_MAP[id] && CATEGORY_MAP[id].fullLength); }
   var CONDITIONS = [
     {id:"clear", label:"Clear", emoji:"☀️"},
     {id:"cloudy", label:"Cloudy", emoji:"☁️"},
@@ -1299,7 +1304,7 @@
   var formPhotoDataUrl = null;
   var editingItemId = null; // set when the add-form is being used to edit an existing item
   var STORE_KEY = "rail-wardrobe-data";
-  var SEED_ITEMS = [{"id": "ivfdgdey3r", "name": "White cotton tee", "category": "tshirt", "warmth": 1, "color": "#F2EEE4", "photo": null, "waterproof": false, "clean": false}, {"id": "ivyaudm4l6", "name": "Navy oxford shirt", "category": "shirt", "warmth": 1, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "ijj3tu16op", "name": "Grey wool jumper", "category": "sweater", "warmth": 3, "color": "#8A8578", "photo": null, "waterproof": false, "clean": true}, {"id": "i7n0kbmy3g", "name": "Black turtleneck", "category": "sweater", "warmth": 3, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "izyb1odzn9", "name": "Denim shirt", "category": "shirt", "warmth": 1, "color": "#5C7A93", "photo": null, "waterproof": false, "clean": false}, {"id": "iv3rpulwxi", "name": "Striped long-sleeve tee", "category": "tshirt", "warmth": 1, "color": "#F2EEE4", "photo": null, "waterproof": false, "clean": true}, {"id": "ihtleprt1w", "name": "Burgundy flannel", "category": "shirt", "warmth": 1, "color": "#B5533C", "photo": null, "waterproof": false, "clean": true}, {"id": "ibei199chy", "name": "Olive henley", "category": "tshirt", "warmth": 1, "color": "#6B7F5B", "photo": null, "waterproof": false, "clean": true}, {"id": "ifcrkisnqo", "name": "Cream cable knit", "category": "sweater", "warmth": 3, "color": "#D4A24C", "photo": null, "waterproof": false, "clean": false}, {"id": "iq2xk41q2e", "name": "Charcoal hoodie", "category": "hoodie", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "iigbeaeviw", "name": "Light blue linen shirt", "category": "shirt", "warmth": 1, "color": "#5C7A93", "photo": null, "waterproof": false, "clean": true}, {"id": "iytim1mfzy", "name": "Dark indigo jeans", "category": "jeans", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "ihdpgd5uga", "name": "Black tailored trousers", "category": "trousers", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "i7perpm6qx", "name": "Khaki chinos", "category": "trousers", "warmth": 2, "color": "#D4A24C", "photo": null, "waterproof": false, "clean": true}, {"id": "ilys8fnzgx", "name": "Grey wool trousers", "category": "trousers", "warmth": 2, "color": "#8A8578", "photo": null, "waterproof": false, "clean": false}, {"id": "i8rd575zfr", "name": "Blue denim shorts", "category": "shorts", "warmth": 1, "color": "#5C7A93", "photo": null, "waterproof": false, "clean": false}, {"id": "i7c932hv5l", "name": "Olive cargo pants", "category": "cargos", "warmth": 2, "color": "#6B7F5B", "photo": null, "waterproof": false, "clean": true}, {"id": "ihahy9oh6c", "name": "White linen trousers", "category": "trousers", "warmth": 2, "color": "#F2EEE4", "photo": null, "waterproof": false, "clean": false}, {"id": "ioj2hs4trs", "name": "Black jogger sweats", "category": "joggers", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "iqt3lwer5x", "name": "Brown corduroys", "category": "trousers", "warmth": 2, "color": "#8B5E3C", "photo": null, "waterproof": false, "clean": true}, {"id": "inywponn3w", "name": "Dark green chino shorts", "category": "shorts", "warmth": 1, "color": "#6B7F5B", "photo": null, "waterproof": false, "clean": true}, {"id": "ibz8gl8vpm", "name": "White leather sneakers", "category": "sneakers", "warmth": 1, "color": "#F2EEE4", "photo": null, "waterproof": false, "clean": false}, {"id": "i622lm94yj", "name": "Brown leather boots", "category": "boots", "warmth": 2, "color": "#8B5E3C", "photo": null, "waterproof": true, "clean": true}, {"id": "iy32cxip4b", "name": "Black chelsea boots", "category": "boots", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": true, "clean": true}, {"id": "icpmlvd1i4", "name": "Grey running trainers", "category": "sneakers", "warmth": 1, "color": "#8A8578", "photo": null, "waterproof": false, "clean": false}, {"id": "i3j3k22qr4", "name": "Tan suede loafers", "category": "sneakers", "warmth": 1, "color": "#D4A24C", "photo": null, "waterproof": false, "clean": true}, {"id": "itu5hfawd1", "name": "Black rain boots", "category": "boots", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": true, "clean": true}, {"id": "iiymqalxza", "name": "Navy canvas sneakers", "category": "sneakers", "warmth": 1, "color": "#5C7A93", "photo": null, "waterproof": false, "clean": true}, {"id": "ihmmxfciz1", "name": "Dark green hiking boots", "category": "boots", "warmth": 2, "color": "#6B7F5B", "photo": null, "waterproof": true, "clean": false}, {"id": "ix3zjaumre", "name": "Black chukka boots", "category": "boots", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "iil8244dfd", "name": "Tan leather sandals", "category": "sandals", "warmth": 1, "color": "#D4A24C", "photo": null, "waterproof": false, "clean": true}, {"id": "iszx2g7j6l", "name": "Black waterproof rain jacket", "category": "jacket", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": true, "clean": true}, {"id": "ikrr60dcr8", "name": "Navy wool peacoat", "category": "coat", "warmth": 3, "color": "#5C7A93", "photo": null, "waterproof": false, "clean": false}, {"id": "izdichbh3f", "name": "Olive utility jacket", "category": "jacket", "warmth": 2, "color": "#6B7F5B", "photo": null, "waterproof": false, "clean": true}, {"id": "igyfh8uuyr", "name": "Grey puffer jacket", "category": "puffer", "warmth": 3, "color": "#8A8578", "photo": null, "waterproof": false, "clean": true}, {"id": "i0fl6ovv91", "name": "Brown leather belt", "category": "belt", "warmth": 1, "color": "#8B5E3C", "photo": null, "waterproof": false, "clean": true}, {"id": "idxvszmrhx", "name": "Grey wool scarf", "category": "scarf", "warmth": 3, "color": "#8A8578", "photo": null, "waterproof": false, "clean": false}, {"id": "i42l4wdylh", "name": "Black beanie", "category": "hat", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "ib45el8wmj", "name": "Grey windbreaker", "category": "windbreaker", "warmth": 1, "color": "#8A8578", "photo": null, "waterproof": true, "clean": true}, {"id": "i9j3y1dghr", "name": "Black pullover hoodie", "category": "hoodie", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}];
+  var SEED_ITEMS = [{"id": "ivfdgdey3r", "name": "White cotton tee", "category": "tshirt", "warmth": 1, "color": "#F2EEE4", "photo": null, "waterproof": false, "clean": false}, {"id": "ivyaudm4l6", "name": "Navy oxford shirt", "category": "shirt", "warmth": 1, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "ijj3tu16op", "name": "Grey wool jumper", "category": "sweater", "warmth": 3, "color": "#8A8578", "photo": null, "waterproof": false, "clean": true}, {"id": "i7n0kbmy3g", "name": "Black turtleneck", "category": "sweater", "warmth": 3, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "izyb1odzn9", "name": "Denim shirt", "category": "shirt", "warmth": 1, "color": "#5C7A93", "photo": null, "waterproof": false, "clean": false}, {"id": "iv3rpulwxi", "name": "Striped long-sleeve tee", "category": "tshirt", "warmth": 1, "color": "#F2EEE4", "photo": null, "waterproof": false, "clean": true}, {"id": "ihtleprt1w", "name": "Burgundy flannel", "category": "shirt", "warmth": 1, "color": "#B5533C", "photo": null, "waterproof": false, "clean": true}, {"id": "ibei199chy", "name": "Olive henley", "category": "tshirt", "warmth": 1, "color": "#6B7F5B", "photo": null, "waterproof": false, "clean": true}, {"id": "ifcrkisnqo", "name": "Cream cable knit", "category": "sweater", "warmth": 3, "color": "#D4A24C", "photo": null, "waterproof": false, "clean": false}, {"id": "iq2xk41q2e", "name": "Charcoal hoodie", "category": "hoodie", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "iigbeaeviw", "name": "Light blue linen shirt", "category": "shirt", "warmth": 1, "color": "#5C7A93", "photo": null, "waterproof": false, "clean": true}, {"id": "iytim1mfzy", "name": "Dark indigo jeans", "category": "jeans", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "ihdpgd5uga", "name": "Black tailored trousers", "category": "trousers", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "i7perpm6qx", "name": "Khaki chinos", "category": "trousers", "warmth": 2, "color": "#D4A24C", "photo": null, "waterproof": false, "clean": true}, {"id": "ilys8fnzgx", "name": "Grey wool trousers", "category": "trousers", "warmth": 2, "color": "#8A8578", "photo": null, "waterproof": false, "clean": false}, {"id": "i8rd575zfr", "name": "Blue denim shorts", "category": "shorts", "warmth": 1, "color": "#5C7A93", "photo": null, "waterproof": false, "clean": false}, {"id": "ihahy9oh6c", "name": "White linen trousers", "category": "trousers", "warmth": 2, "color": "#F2EEE4", "photo": null, "waterproof": false, "clean": false}, {"id": "ioj2hs4trs", "name": "Black jogger sweats", "category": "joggers", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "iqt3lwer5x", "name": "Brown corduroys", "category": "trousers", "warmth": 2, "color": "#8B5E3C", "photo": null, "waterproof": false, "clean": true}, {"id": "inywponn3w", "name": "Dark green chino shorts", "category": "shorts", "warmth": 1, "color": "#6B7F5B", "photo": null, "waterproof": false, "clean": true}, {"id": "ibz8gl8vpm", "name": "White leather sneakers", "category": "sneakers", "warmth": 1, "color": "#F2EEE4", "photo": null, "waterproof": false, "clean": false}, {"id": "i622lm94yj", "name": "Brown leather boots", "category": "boots", "warmth": 2, "color": "#8B5E3C", "photo": null, "waterproof": true, "clean": true}, {"id": "iy32cxip4b", "name": "Black chelsea boots", "category": "boots", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": true, "clean": true}, {"id": "icpmlvd1i4", "name": "Grey running trainers", "category": "sneakers", "warmth": 1, "color": "#8A8578", "photo": null, "waterproof": false, "clean": false}, {"id": "i3j3k22qr4", "name": "Tan suede loafers", "category": "sneakers", "warmth": 1, "color": "#D4A24C", "photo": null, "waterproof": false, "clean": true}, {"id": "itu5hfawd1", "name": "Black rain boots", "category": "boots", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": true, "clean": true}, {"id": "iiymqalxza", "name": "Navy canvas sneakers", "category": "sneakers", "warmth": 1, "color": "#5C7A93", "photo": null, "waterproof": false, "clean": true}, {"id": "ihmmxfciz1", "name": "Dark green hiking boots", "category": "boots", "warmth": 2, "color": "#6B7F5B", "photo": null, "waterproof": true, "clean": false}, {"id": "ix3zjaumre", "name": "Black chukka boots", "category": "boots", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "iil8244dfd", "name": "Tan leather sandals", "category": "sandals", "warmth": 1, "color": "#D4A24C", "photo": null, "waterproof": false, "clean": true}, {"id": "iszx2g7j6l", "name": "Black waterproof rain jacket", "category": "jacket", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": true, "clean": true}, {"id": "ikrr60dcr8", "name": "Navy wool peacoat", "category": "coat", "warmth": 3, "color": "#5C7A93", "photo": null, "waterproof": false, "clean": false}, {"id": "izdichbh3f", "name": "Olive utility jacket", "category": "jacket", "warmth": 2, "color": "#6B7F5B", "photo": null, "waterproof": false, "clean": true}, {"id": "igyfh8uuyr", "name": "Grey puffer jacket", "category": "puffer", "warmth": 3, "color": "#8A8578", "photo": null, "waterproof": false, "clean": true}, {"id": "i0fl6ovv91", "name": "Brown leather belt", "category": "belt", "warmth": 1, "color": "#8B5E3C", "photo": null, "waterproof": false, "clean": true}, {"id": "idxvszmrhx", "name": "Grey wool scarf", "category": "scarf", "warmth": 3, "color": "#8A8578", "photo": null, "waterproof": false, "clean": false}, {"id": "i42l4wdylh", "name": "Black beanie", "category": "hat", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}, {"id": "ib45el8wmj", "name": "Grey windbreaker", "category": "windbreaker", "warmth": 1, "color": "#8A8578", "photo": null, "waterproof": true, "clean": true}, {"id": "i9j3y1dghr", "name": "Black pullover hoodie", "category": "hoodie", "warmth": 2, "color": "#23262B", "photo": null, "waterproof": false, "clean": true}];
 
   function uid(){ return 'i' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
 
@@ -1851,7 +1856,10 @@
 
     var chosen = {};
     chosen.top = closestWarmth(byCat('top'), needWarmth);
-    chosen.bottom = closestWarmth(byCat('bottom'), needWarmth);
+    // a dress already covers the bottom half — don't put trousers under it
+    chosen.bottom = (chosen.top && catFullLength(chosen.top.category))
+      ? null
+      : closestWarmth(byCat('bottom'), needWarmth);
     chosen.shoes = pickRandom(byCat('shoes').filter(function(i){
       return weather.cond !== 'rain' || i.waterproof;
     })) || pickRandom(byCat('shoes'));
@@ -1907,7 +1915,7 @@
     return g;
   }
 
-  var SLEEVE_STYLE = { tanktop:'none', tshirt:'short', shirt:'short', sweater:'long' };
+  var SLEEVE_STYLE = { tanktop:'none', croptop:'none', tshirt:'short', shirt:'short', sweater:'long' };
   var COLLAR_ACCENT = { shirt:true, sweater:true };
   var BOTTOM_STYLE = { shorts:'shorts', skirt:'skirt' }; // everything else defaults to 'pants'
   var SHOE_STYLE = { boots:'boots', sandals:'sandals' }; // everything else defaults to 'sneakers'
@@ -1939,8 +1947,13 @@
 
     /* ---- BOTTOM: pants / shorts / skirt ---- */
     var bottomDirty = dirtyMode && chosen.bottom && !chosen.bottom.clean;
+    var fullLengthTop = !!(chosen.top && catFullLength(chosen.top.category));
     hideGroups(prefix, ['pantsGroup','shortsGroup','skirtGroup']);
-    if(chosen.bottom){
+    if(fullLengthTop){
+      // the dress carries on down: same garment, drawn into the skirt panel
+      showGroup(prefix, 'skirtGroup');
+      setAvatarPart(prefix, 'skirtPanel', chosen.top, topDirty);
+    } else if(chosen.bottom){
       var bStyle = BOTTOM_STYLE[chosen.bottom.category] || 'pants';
       if(bStyle === 'pants'){
         showGroup(prefix, 'pantsGroup');
@@ -2047,7 +2060,9 @@
         pill.className = 'caption-pill' + (isDirty ? ' isdirty' : '');
         pill.textContent = it.name + (isDirty ? ' · dirty' : '');
         wrap.appendChild(pill);
-      } else if(slot.key === 'top' || slot.key === 'bottom' || slot.key === 'shoes'){
+      } else if(slot.key === 'top' || slot.key === 'shoes'){
+        missing.push(slot.label.toLowerCase());
+      } else if(slot.key === 'bottom' && !(chosen.top && catFullLength(chosen.top.category))){
         missing.push(slot.label.toLowerCase());
       }
     });
@@ -2207,6 +2222,9 @@
   ];
 
   function renderBuilder(){
+    // picking a dress clears any bottom left selected underneath it
+    var builderTop = builderSelection.top ? findItem(builderSelection.top) : null;
+    if(builderTop && catFullLength(builderTop.category)) builderSelection.bottom = null;
     BUILDER_SLOTS.forEach(function(slot){
       var row = document.getElementById('pick-' + slot.key);
       row.innerHTML = "";
@@ -2313,12 +2331,16 @@
   }
 
   document.getElementById('saveOutfitBtn').onclick = function(){
-    if(!builderSelection.top || !builderSelection.bottom || !builderSelection.shoes){
+    var savedTop = builderSelection.top ? findItem(builderSelection.top) : null;
+    var savedTopIsFullLength = !!(savedTop && catFullLength(savedTop.category));
+    if(!builderSelection.top || (!builderSelection.bottom && !savedTopIsFullLength) || !builderSelection.shoes){
       var preview = document.getElementById('create-captionList');
       var warn = document.createElement('div');
       warn.className = 'missing-slot';
       warn.style.marginTop = '6px';
-      warn.textContent = 'Pick at least a top, bottom, and shoes before saving.';
+      warn.textContent = savedTopIsFullLength
+        ? 'Pick at least a dress and shoes before saving.'
+        : 'Pick at least a top, bottom, and shoes before saving.';
       preview.appendChild(warn);
       return;
     }
