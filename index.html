@@ -136,7 +136,7 @@
     width:52px;height:52px;
     border-radius:var(--radius-sm);
     border:none;
-    box-shadow:var(--shadow-sm);
+    box-shadow:var(--shadow-sm), inset 0 0 0 1px rgba(0,0,0,0.07);
     margin-top:0;
     overflow:hidden;
     background-size:cover;
@@ -1241,7 +1241,16 @@
 (function(){
   "use strict";
 
-  var COLORS = ["#23262B","#F2EEE4","#DE7FA8","#E0793C","#B5533C","#5C7A93","#6B7F5B","#D4A24C","#8B5E3C","#8A8578"];
+  // Wardrobe swatches — the colours you can tag a garment with when it has no photo.
+  // Pinks, reds, oranges and blues first, then the neutrals every closet needs.
+  var COLORS = [
+    "#F6A9C0", "#EE4E93", "#B9245F",              // pink: baby, hot, raspberry
+    "#E8353F", "#A81E2E",                          // red: bright, burgundy
+    "#FF8A3D", "#E85D22",                          // orange: bright, burnt
+    "#7EC8F0", "#2F7FD6", "#5C7A93", "#24406B",    // blue: sky, bright, denim, navy
+    "#FFFFFF", "#F2EEE4",                          // white, cream
+    "#9EA0A6", "#23262B"                           // grey, black
+  ];
   var CATEGORY_MAP = {
     tshirt:{label:"T-Shirt", slot:"top", warmth:1},
     shirt:{label:"Shirt", slot:"top", warmth:1},
@@ -1678,6 +1687,14 @@
 
   /* ---------------- Add item form ---------------- */
 
+  // Pale garment colours (white, cream, baby pink...) vanish against a white
+  // card, so they get a hairline outline in the picker.
+  function isPaleColor(hex){
+    var h = hex.replace('#','');
+    var r = parseInt(h.substr(0,2),16), g = parseInt(h.substr(2,2),16), b = parseInt(h.substr(4,2),16);
+    return (0.2126*r + 0.7152*g + 0.0722*b) > 218;
+  }
+
   function buildColorRow(){
     var row = document.getElementById('colorRow');
     row.innerHTML = "";
@@ -1686,7 +1703,9 @@
       b.type = 'button';
       b.className = 'swatch-pick' + (c === selectedColor ? ' sel' : '');
       b.style.background = c;
-      b.style.border = (c === '#F2EEE4') ? '1px solid #DAD3C4' : (b.className.indexOf('sel')>-1? '2px solid #23262B':'2px solid transparent');
+      b.style.border = b.className.indexOf('sel') > -1 ? '2px solid #23262B'
+                     : isPaleColor(c) ? '2px solid #D8D2CC'
+                     : '2px solid transparent';
       b.onclick = function(){
         selectedColor = c;
         buildColorRow();
